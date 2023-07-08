@@ -2,7 +2,6 @@ import React from 'react'
 import { DocsThemeConfig } from 'nextra-theme-docs'
 
 const config: DocsThemeConfig = {
-  head: () => '5P34R writeups', 
   logo: <span>5P34R writeups</span>,
   project: {
     link: 'https://github.com/VishDroid-dev',
