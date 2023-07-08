@@ -1,0 +1,18 @@
+# Level 5
+
+We are given with a task of `Exploit a structured query language injection vulnerability to leak data`
+
+As usual we got the machine access and source code access.
+
+```python
+
+def level5():
+    db.execute(("CREATE TABLE IF NOT EXISTS users AS "
+                'SELECT "flag" AS username, ? AS password'),
+               (flag,))
+
+    query = request.args.get("query", "%")
+    users = db.execute(f'SELECT username FROM users WHERE username LIKE "{query}"').fetchall()
+    return "".join(f'{user["username"]}\n' for user in users)
+
+```

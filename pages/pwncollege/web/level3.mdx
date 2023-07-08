@@ -1,0 +1,49 @@
+# Level 3
+
+We are given with a task to `Exploit an authentication bypass vulnerability`🔓
+
+As always we are given with an machine and source code of the application.
+
+```python
+def level3():
+    db.execute(("CREATE TABLE IF NOT EXISTS users AS "
+                'SELECT "flag" AS username, ? as password'),
+               (flag,))
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        assert username, "Missing `username` form"
+        assert password, "Missing `password` form"
+
+        user = db.execute(f"SELECT rowid, * FROM users WHERE username = ? AND password = ?", (username, password)).fetchone()
+        assert user, "Invalid `username` or `password`"
+
+        return redirect(request.path, user=int(user["rowid"]))
+
+    if "user" in request.args:
+        user_id = int(request.args["user"])
+        user = db.execute("SELECT * FROM users WHERE rowid = ?", (user_id,)).fetchone()
+        if user:
+            username = user["username"]
+            if username == "flag":
+                return f"{flag}\n"
+            return f"Hello, {username}!\n"
+
+    return form(["username", "password"])
+
+```
+
+So, we can see that the application is using database and we can see that the `username` and `password` are passed as `POST` parameters.
+It checks the given username and password if user doesnt exists it asserts the error and if user exists it redirects to the same page with `user` parameter in the url.
+
+So, we can see that the `user` parameter is not sanitized and we can use this to bypass the authentication.
+we can pass integer values directly into the `user` parameter and it will return the username of the user with that id.
+
+lets try to pass `user=1` in the url and we get the username of the user with id 1.
+
+```bash
+hacker@web-security-level-3:~$ curl http://challenge.localhost/?user=1
+pwn.college{cmVL1XdbMpOFvsi5Xc3_sR9xEZ9.dlDOzMDL0IzMyMzW}
+```
+It reveals the flag 🚩.
