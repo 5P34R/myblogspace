@@ -14,7 +14,7 @@ const config: DocsThemeConfig = {
     return {
       titleTemplate: '%s – 5P34R'
     }
-  }
+  },
 }
 
 export default config
