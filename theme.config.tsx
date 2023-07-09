@@ -6,7 +6,7 @@ const config: DocsThemeConfig = {
   project: {
     link: 'https://github.com/VishDroid-dev',
   },
-  docsRepositoryBase: 'https://github.com/VishDroid-dev/myblogspace',
+  docsRepositoryBase: 'https://github.com/VishDroid-dev/myblogspace/tree/main',
   footer: {
     text: 'Made with love by VishDroid-dev 💗',
   },
