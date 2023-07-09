@@ -1,0 +1,94 @@
+# Too close for comfort
+Medium | Cryptography | 1500 points | 31 solves
+### DESCRIPTION
+
+In the realm of Numeria, where numbers hold the key to ancient secrets, a legend whispers of a challenge called "Too Close for Comfort." It tells of a cryptic code that guards a hidden chamber, where twin primes, magically entwined, hold the power to unlock unparalleled wisdom and boundless treasures.
+
+Numeria, once a realm of harmony and enlightenment, now finds itself in the grip of uncertainty. The Twin Chamber, a vault rumored to contain the answers to life's deepest mysteries, has remained elusive, its entrance guarded by a code steeped in complexity. But hope resurfaces as the seekers of knowledge discover a glimmer of possibility within the enigmatic challenge, "Too Close for Comfort."
+
+Within the cryptic code lies a hidden flag—an enigmatic phrase that embodies the essence of the Twin Chamber's secrets. It is a symbol of wisdom and prosperity, waiting to be unveiled by those daring enough to traverse the intricate path of encryption.
+
+Armed with their cryptographic tools, the seekers embark on a quest that explores the delicate dance between twin primes. The code, a fusion of ancient mathematical techniques and modern encryption algorithms, guides them on a journey through the enigmatic realm of closely spaced primes.
+
+Wrap the flag in the `flag format: flag{...}`
+
+### Challenge Files
+```python filename="chall.py" copy
+from gmpy2 import next_prime,invert
+from Crypto.Util.number import *
+
+flag = "flag{REDACTED}"
+flag = bytes_to_long(flag.encode())
+p = getPrime(512)
+q = next_prime(p)
+n = p*q
+e = 65537
+phi = (p-1)*(q-1)
+d = invert(e,phi)
+c = pow(flag,e,n)
+print("n : ",n)
+print("c : ",c)
+```
+```text filename="output.txt" copy
+n :  51262621421762918526093632383370534180768834026547970314343452353598602088230820806033740007328795554570642318252789666763315253509866489972304631274050880096358261400196083773961768871182868182980255954230646365163347738340923164839702959948086049748616395632937734313167798374046524562505972965628250476311
+c :  36352708125237430764760060909529418780804291559038503125980629255501905387145728377360035341308086330195140200675778521280834125163178872194321306790556273663838697235094376480117986175292388705005403870523760260925627224110383230794735856903192310702009799631105903896037080675097289706993777714380538272695
+```
+Its a typical RSA problem
+
+### Understanding the code
+```python filename="chall.py" copy {2} /next_prime/
+p = getPrime(512)
+q = next_prime(p)
+```
+We are taking two nearest primes. The is so obvious we can use FermatFactorization and retrive the primes
+
+### Solution
+```python filename="solve.py" copy
+import gmpy2
+from gmpy2 import mpz, xmpz
+from Crypto.Util.number import *
+
+
+def FermatFactor(n: int, max_steps: int):
+    if n % 2 == 0:
+        return 2, n // 2
+
+    a = gmpy2.isqrt(n)
+
+    if a * a == n:
+        return a, a
+
+    a += 1  # ceil(sqrt(n))
+    b2 = a * a - n
+
+    for _ in range(max_steps):
+        if gmpy2.is_square(b2):
+            return a + gmpy2.isqrt(b2), a - gmpy2.isqrt(b2)
+
+        b2 += a
+        a += 1
+        b2 += a
+    return None
+n = 51262621421762918526093632383370534180768834026547970314343452353598602088230820806033740007328795554570642318252789666763315253509866489972304631274050880096358261400196083773961768871182868182980255954230646365163347738340923164839702959948086049748616395632937734313167798374046524562505972965628250476311
+m = 2
+x = FermatFactor(n,m)
+p,q = x
+ct = 36352708125237430764760060909529418780804291559038503125980629255501905387145728377360035341308086330195140200675778521280834125163178872194321306790556273663838697235094376480117986175292388705005403870523760260925627224110383230794735856903192310702009799631105903896037080675097289706993777714380538272695
+print(f"p: {int(p)}")
+print(f"q: {int(q)}")
+e = 65537
+phi = (p-1)*(q-1)
+d = pow(e,-1,phi)
+m = pow(ct,d,n)
+plain_txt = long_to_bytes(int(m))
+print(f"ct: {plain_txt}")
+```
+```text filename="output.txt" copy
+p: 7159791995705106971518692600097404910939050335478820485341939449925205880647134325454070146449825578592400158599249475957026040350418341470093545761250817
+q: 7159791995705106971518692600097404910939050335478820485341939449925205880647134325454070146449825578592400158599249475957026040350418341470093545761250583
+```
+
+### Flag 🚩
+```text filename="output.txt" copy
+b'Cl0s3_pr!m3s_c4n_3as!1y_b3_s01v3d_us!ng_f3rm47'
+```

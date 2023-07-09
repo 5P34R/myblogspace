@@ -1,13 +1,15 @@
 {
   "index": "Introduction",
   "about": {
-    "title": "About",
-    "type": "page"
+    "title": "Buy Me a Coffee ↗",
+    "type": "page",
+    "href": "https://www.buymeacoffee.com/vk2345732H",
+    "newWindow": true
   },
   "contact": {
     "title": "Contact ↗",
     "type": "page",
-    "href": "https://twitter.com/shuding_",
+    "href": "https://twitter.com/Vishnu27302693",
     "newWindow": true
   }
 }

@@ -1,0 +1,86 @@
+# Common Thread
+
+Medium | crypto | 1500 | 31 Solves | 🩸
+
+### DESCRIPTION
+
+In the realm of cryptography, a captivating challenge beckons under the title Common Thread. It unveils a tale of interconnectedness and hidden messages, where two distinct exponents, e1 and e2, hold the power to encrypt the truth.
+
+Within the realm, prime numbers p and q stand as guardians of secrecy. United, they form a formidable number, n, which sets the stage for encrypted revelations.
+
+Your mission is to accept the challenge and decipher the encrypted messages, ct1 and ct2, born from the interplay of exponents and primes. Unravel the common thread that binds them, and in doing so, reveal the hidden truths they safeguard.
+
+Prepare to untie the Common Thread, where encryption and intrigue intertwine. Unlock the secrets, follow the trail, and let the common thread guide you to the heart of the mystery.
+
+`flag format: flag{...}`
+
+### Challenge Files
+
+```python filename="chall.py"
+from Crypto.Util.number import getPrime,long_to_bytes,bytes_to_long as b2l
+pt = b2l(b'############REDACTED#############')
+
+e1 = 3
+e2 = 65537
+
+p = getPrime(512)
+q = getPrime(512) 
+n = p * q
+print("p = ",p)
+print("q = ",q)
+print("n = ",n)
+
+ct1 = pow(pt,e1,n)
+ct2 = pow(pt,e2,n)
+
+print("ct_1 = ",ct1)
+print("ct_2 = ",ct2)
+```
+```text filename="output.txt"
+n : 82529003854107449655882828779306680261322514291578176914855335660196316136020891330282977862392781955576003908276918336232496428394902701712865050846177919432150024221333248869182819160724004027687615316604524956477726853341471729490579781226904750203267774815266814993007700799909440327200157743001636208979
+ct_1 :  1668144786170996657595999258788854859050046938776760313024051039263047123771288332894513993152851393510238898052607710731359323557904957777106934584412944237025988585303236848198011801305784092763134546736133138274497511627826158781621349
+ct_2 :  74649112917012996389389688584539047038814117242787890422412732444940527114465444367380737027429811175792775942029514501984215700751646085548563043007478959667954572646871197479085745750752565780467426634242197633017759627505025163899052769039873499225975956547197603101339946515705697532653196551891380383692
+```
+
+### Understanding the challenge
+This challenge as so obvious its using same n for encryption with two different exponents. So we can use [common modulus attack](https://crypto.stackexchange.com/questions/16283/how-to-use-common-modulus-attack) to get the flag.
+Here is a great [blog](https://infosecwriteups.com/rsa-attacks-common-modulus-7bdb34f331a5) by Andreas Pogiatzis
+
+### Solution
+```python filename="solve.py" copy
+from Crypto.Util.number import long_to_bytes
+
+n = 82529003854107449655882828779306680261322514291578176914855335660196316136020891330282977862392781955576003908276918336232496428394902701712865050846177919432150024221333248869182819160724004027687615316604524956477726853341471729490579781226904750203267774815266814993007700799909440327200157743001636208979
+e1 = 3
+c1 = 1668144786170996657595999258788854859050046938776760313024051039263047123771288332894513993152851393510238898052607710731359323557904957777106934584412944237025988585303236848198011801305784092763134546736133138274497511627826158781621349
+e2 = 65537
+c2 = 74649112917012996389389688584539047038814117242787890422412732444940527114465444367380737027429811175792775942029514501984215700751646085548563043007478959667954572646871197479085745750752565780467426634242197633017759627505025163899052769039873499225975956547197603101339946515705697532653196551891380383692
+
+def egcd(a, b):
+    if a == 0:
+        return (b, 0, 1)
+    else:
+        g, y, x = egcd(b % a, a)
+        return (g, x - (b // a) * y, y)
+
+def modinv(a, m):
+    g, x, y = egcd(a, m)
+    if g != 1:
+        raise ValueError('Modular inverse does not exist.')
+    else:
+        return x % m
+
+def attack(c1, c2, e1, e2, N):
+    if gcd(e1, e2) != 1:
+        raise ValueError("Exponents e1 and e2 must be coprime")
+    s1 = modinv(e1,e2)
+    s2 = (gcd(e1,e2) - e1 * s1) / e2
+    temp = modinv(c2, N)
+    m1 = pow(c1,s1,N)
+    m2 = pow(temp,-s2,N)
+    return (m1 * m2) % N
+long_to_bytes(attack(c1,c2,e1,e2,n))
+```
+
+### Flag 🚩
+`b'flag{b3z0u7_l0v3s_c0mm0n_m06u1u5}'`
