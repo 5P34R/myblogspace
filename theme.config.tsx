@@ -6,7 +6,7 @@ const config: DocsThemeConfig = {
   project: {
     link: 'https://github.com/VishDroid-dev',
   },
-  docsRepositoryBase: 'https://github.com/shuding/nextra-docs-template',
+  docsRepositoryBase: 'https://github.com/VishDroid-dev/myblogspace',
   footer: {
     text: 'Made with love by VishDroid-dev 💗',
   },
