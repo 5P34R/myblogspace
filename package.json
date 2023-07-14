@@ -1,7 +1,7 @@
 {
   "name": "spear-blogs",
   "version": "0.0.1",
-  "description": "Nextra docs template",
+  "description": "5P34R Writeups and Blogs",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/shuding/nextra-docs-template.git"
+    "url": "git+https://github.com/VishDroid-dev/myblogspace.git"
   },
   "author": "Shu Ding <g@shud.in>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/shuding/nextra-docs-template/issues"
+    "url": "https://github.com/VishDroid-dev/myblogspace/issues"
   },
-  "homepage": "https://github.com/shuding/nextra-docs-template#readme",
+  "homepage": "https://github.com/VishDroid-dev/myblogspace#readme",
   "dependencies": {
     "@radix-ui/react-icons": "^1.3.0",
     "class-variance-authority": "^0.6.1",
@@ -26,6 +26,7 @@
     "nextra-theme-docs": "latest",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "tailwindcss": "^3.3.2",
     "tailwind-merge": "^1.13.2",
     "tailwindcss-animate": "^1.0.6"
   },
