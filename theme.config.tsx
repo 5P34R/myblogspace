@@ -8,13 +8,18 @@ const config: DocsThemeConfig = {
   },
   docsRepositoryBase: 'https://github.com/VishDroid-dev/myblogspace/tree/main',
   footer: {
-    text: 'Made with love by VishDroid-dev 💗',
+    text: 'Made by VishDroid-dev 💗',
   },
   useNextSeoProps() {
     return {
-      titleTemplate: '%s – 5P34R'
+      titleTemplate: '%s - 5P34R'
     }
   },
+  search: {
+    placeholder: 'Search Writeups',
+  }
 }
+
+
 
 export default config
